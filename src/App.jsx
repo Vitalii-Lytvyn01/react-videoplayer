@@ -4,7 +4,9 @@ import './App.scss'
 function App() {
   return (
     <>
-      <Player />
+      <Player
+        link="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      />
     </>
   )
 }

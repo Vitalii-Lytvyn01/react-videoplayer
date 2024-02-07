@@ -8,12 +8,14 @@ const VIDEO_STATE = {
     play: 'play',
 }
 
-export function Player () {
+export function Player ({link = ""}) {
   const [videoState, setVideoState] = useState('pause');
   const [playbackTime,setPlaybackTime] = useState(0);
+  const [volume,setVolume] = useState(1);
   const [duration,setDuration] = useState(0);
   const videoElement = useRef(0);
   const fillBar = useRef(0);
+  const volumeBar = useRef(0);
 
   useInterval(()=>{
       setPlaybackTime(videoElement.current.currentTime);
@@ -70,6 +72,12 @@ export function Player () {
     return `${formattedCurrent}|${formattedDuration}`;
   }
 
+  function handleVolumeChange(value) {
+    videoElement.current.volume = value;
+    volumeBar.current.style.background = `linear-gradient(to right, #000 0%, #000 ${value*100}%, #FFF ${value*100}%, #FFF 100%)`;
+    setVolume(value);
+  }
+
   function trackMouse(e) {
     let rect = e.currentTarget.getBoundingClientRect();
     let x = e.clientX - rect.left;
@@ -90,9 +98,16 @@ export function Player () {
                 muted={true}
                 onLoadedMetadata={(e) => updateMetaData(e)}
               >
-                  <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+                  <source src={link} type="video/mp4" />
+                  <p>Your browser doesn't support HTML video.</p>
               </video>
               <div className="controls-container">
+                  <div
+                    onClick={changeCurrentTime}
+                    // onMouseMove={trackMouse}
+                    className="timeline-bar">
+                    <div ref={fillBar} className="fill-bar"></div>
+                  </div>
                   <div
                       className={classnames("state-button",[`state-button-${videoState}`])}
                       onClick={() => changeVideoState()}
@@ -100,11 +115,21 @@ export function Player () {
                   <div className="video-time">
                     {getFormattedTime(playbackTime,duration)}
                   </div>
-                  <div
-                    onClick={changeCurrentTime}
-                    onMouseMove={trackMouse}
-                    className="timeline-bar">
-                    <div ref={fillBar} className="fill-bar"></div>
+                  <div className="volume-controls">
+                    <div
+                      className={classnames("volume-button",{muted: volume === 0})}
+                      onClick={(e) => handleVolumeChange(volume !== 0 ? 0 : 1)}
+                    ></div>
+                    <input
+                      type="range"
+                      value={volume}
+                      min="0"
+                      max="1"
+                      step="0.02"
+                      class="volume-slider"
+                      ref={volumeBar}
+                      onInput={(e) => {handleVolumeChange(e.target.value)}}
+                    ></input>
                   </div>
               </div>
           </div>
