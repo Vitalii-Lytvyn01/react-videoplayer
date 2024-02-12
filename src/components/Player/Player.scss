@@ -12,14 +12,13 @@
     }
 
     .controls-container {
-        display: grid;
-        align-items: center;
-        grid-template-rows: 10px 30px;
-        grid-template-columns: 30px 125px 135px 1fr;
-        row-gap: 5px;
+        display: flex;
+        flex-wrap: wrap;
         column-gap: 10px;
+        row-gap: 10px;
         width: 100%;
-        height: 45px;
+        height: fit-content;
+        justify-content: space-between;
         bottom: 5px;
         padding: 0 10px;
         position: absolute;
@@ -51,23 +50,42 @@
         }
 
         .timeline-bar {
-          grid-row: 1 / 2;
-          grid-column: 1/-1;
           width: 100%;
-          height: 100%;
-          
+          height: 8px;
+
           background-color: grey;
           opacity: 0.7;
+          border-radius: 4px;
 
           cursor: pointer;
+
+          transition: all 0.5s ease;
 
           .fill-bar{
             height: 100%;
             width: 0%;
+
             background-color: white;
             opacity: 0.8;
+            border-radius: 4px;
+
             cursor: pointer;
           }
+        }
+
+        .timeline-bar:hover {
+          transform: scaleY(2);
+          opacity: 1;
+
+          .fill-bar {
+            opacity: 1;
+          }
+        }
+
+        .lower-controls-container {
+          display: flex;
+          align-items: center;
+          column-gap: 10px;
         }
 
         .volume-controls {
@@ -116,6 +134,22 @@
             cursor: ew-resize;
             background: #434343;
           }
+        }
+
+        .fullscreen-button {
+          width: 24px;
+          height: 24px;
+          cursor: pointer;
+
+          background-size: contain;
+          background-position: center;
+          background-repeat: no-repeat;
+          filter: invert(100%) sepia(3%) saturate(11%) hue-rotate(67deg) brightness(104%) contrast(100%);
+          background-image: url('../../assets/fullscreen.svg');
+        }
+
+        .fullscreen-exit {
+          background-image: url('../../assets/fullscreen_exit.svg');
         }
     }
 

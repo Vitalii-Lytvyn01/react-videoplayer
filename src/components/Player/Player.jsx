@@ -12,10 +12,12 @@ export function Player ({link = ""}) {
   const [videoState, setVideoState] = useState('pause');
   const [playbackTime,setPlaybackTime] = useState(0);
   const [volume,setVolume] = useState(1);
+  const [fullScreenEnabled, setFullScreenEnabled] = useState(false); 
   const [duration,setDuration] = useState(0);
   const videoElement = useRef(0);
   const fillBar = useRef(0);
   const volumeBar = useRef(0);
+  const playerElement = useRef(0);
 
   useInterval(()=>{
       setPlaybackTime(videoElement.current.currentTime);
@@ -78,6 +80,16 @@ export function Player ({link = ""}) {
     setVolume(value);
   }
 
+  function handleFullscreenClick() {
+    if(fullScreenEnabled) {
+      document.exitFullscreen()
+      setFullScreenEnabled(false);
+    } else {
+      playerElement.current.requestFullscreen();
+      setFullScreenEnabled(true)
+    }
+  }
+
   function trackMouse(e) {
     let rect = e.currentTarget.getBoundingClientRect();
     let x = e.clientX - rect.left;
@@ -91,6 +103,7 @@ export function Player ({link = ""}) {
             className="player-container"
             onKeyDown={(e) => handleSpacePress(e)}
             tabIndex={"0"}
+            ref={playerElement}
           >
               <video
                 className='video'
@@ -108,28 +121,35 @@ export function Player ({link = ""}) {
                     className="timeline-bar">
                     <div ref={fillBar} className="fill-bar"></div>
                   </div>
-                  <div
-                      className={classnames("state-button",[`state-button-${videoState}`])}
-                      onClick={() => changeVideoState()}
-                  ></div>
-                  <div className="video-time">
-                    {getFormattedTime(playbackTime,duration)}
-                  </div>
-                  <div className="volume-controls">
+                  <div className="lower-controls-container">
                     <div
-                      className={classnames("volume-button",{muted: volume === 0})}
-                      onClick={(e) => handleVolumeChange(volume !== 0 ? 0 : 1)}
+                        className={classnames("state-button",[`state-button-${videoState}`])}
+                        onClick={() => changeVideoState()}
                     ></div>
-                    <input
-                      type="range"
-                      value={volume}
-                      min="0"
-                      max="1"
-                      step="0.02"
-                      class="volume-slider"
-                      ref={volumeBar}
-                      onInput={(e) => {handleVolumeChange(e.target.value)}}
-                    ></input>
+                    <div className="video-time">
+                      {getFormattedTime(playbackTime,duration)}
+                    </div>
+                    <div className="volume-controls">
+                      <div
+                        className={classnames("volume-button",{muted: volume === 0})}
+                        onClick={(e) => handleVolumeChange(volume !== 0 ? 0 : 1)}
+                      ></div>
+                      <input
+                        type="range"
+                        value={volume}
+                        min="0"
+                        max="1"
+                        step="0.02"
+                        className="volume-slider"
+                        ref={volumeBar}
+                        onInput={(e) => {handleVolumeChange(e.target.value)}}
+                      ></input>
+                    </div>
+                  </div>
+                  <div
+                    className={classnames("fullscreen-button", {'fullscreen-exit': fullScreenEnabled})}
+                    onClick={(e) => handleFullscreenClick()}
+                  >
                   </div>
               </div>
           </div>
